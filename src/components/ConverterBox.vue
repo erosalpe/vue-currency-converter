@@ -26,7 +26,7 @@
 
     onMounted(() => initialize());
 
-    const converti = () => {
+    watch([firstCurrencyName, secondCurrencyName, firstCurrencyValue], ([newFirst, newLast, newValue], [oldFirst, oldLast, oldValue])=> {
         if(firstCurrencyValue && (firstCurrencyName && secondCurrencyName)){
             axios.get(`https://api.frankfurter.app/latest?base=${firstCurrencyName.value}&symbols=${secondCurrencyName.value}`)
             .then(response =>{
@@ -38,7 +38,7 @@
                 consol.error("Errore durante il recupero dei tassi di cambio:", error);
             })
         }
-    };
+    });
     
 </script>
 
@@ -50,21 +50,24 @@
 <template>
     <div class="container mt-5">
         <div id="converter-container">
-            <h1>Currency Converter</h1>
-            <div>
-                <div class="d-flex justify-content-between align-items-center">
-                    <input type="number" name="currency-first" id="currency-first" v-model="firstCurrencyValue">
-                    <select name="currencyFirst" id="currencyFirst" v-model="firstCurrencyName">
-                        <option v-for="element in currencyList" :value="element.valuta">{{ element.nome }}</option>
-                    </select>
-                    <span>=></span>
-                    <select name="currencySecond" id="currencySecond" v-model="secondCurrencyName">
-                        <option v-for="element in currencyList" :value="element.valuta">{{ element.nome }}</option>
-                    </select>
-                    <button @click="converti()" class="btn btn-primary">Converti</button>
+            <h1 class="text-center">Currency Converter</h1>
+            <div class="d-flex justify-content-center align-items-center py-2">
+                <div class="d-flex flex-column gap-4">
+                    <input type="number" name="currency-first" id="currency-first" class="w-50 m-0 m-auto" v-model="firstCurrencyValue">
+                    <div class="d-flex align-items-center">
+                        <select name="currencyFirst" id="currencyFirst" v-model="firstCurrencyName">
+                            <option v-for="element in currencyList" :value="element.valuta">{{ element.nome }}</option>
+                        </select>
+        
+                        <span id="arrow"> &#11020; </span>
+                        
+                        <select name="currencySecond" id="currencySecond" v-model="secondCurrencyName">
+                            <option v-for="element in currencyList" :value="element.valuta">{{ element.nome }}</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-            <h3 v-if="secondCurrencyValue != 0">{{ secondCurrencyValue }}</h3> 
+            <h3 class="text-center" v-if="secondCurrencyValue != 0">{{firstCurrencyValue}} {{ firstCurrencyName }} = {{ secondCurrencyValue }} {{ secondCurrencyName }}</h3> 
         </div>
     </div>
 </template>
@@ -95,5 +98,11 @@
     /* Firefox */
     input[type=number] {
     -moz-appearance: textfield;
+    }
+
+    #arrow{
+        font-size: 35px;
+        padding-bottom:5px;
+        margin-inline: 5px;
     }
 </style>
